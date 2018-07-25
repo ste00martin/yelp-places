@@ -1,0 +1,6 @@
+{
+  "extends": [
+    "eslint-config-volta/environment/react.js",
+    "eslint-config-volta"
+  ]
+}
