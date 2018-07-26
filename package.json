@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "flat": "^4.1.0",
     "fs": "^0.0.1-security",
     "got": "^8.3.2",
     "papaparse": "^4.5.0"
