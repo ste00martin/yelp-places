@@ -27,6 +27,8 @@ const outputFileName = 'yelp-data-' + getDate() + '.csv'
 
 const inputFileName = args[0]
 
+const category = args[1]
+
 if (fs.existsSync(inputFileName)) {
   console.log('hello world', inputFileName)
 
