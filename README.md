@@ -6,5 +6,5 @@ Reads in a csv; hits the yelp api endpoint and spits out information on each sta
 ```sh
 npm link
 
-get-yelp-data input.csv
+get-yelp-data input.csv shopping
 ```

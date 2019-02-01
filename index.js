@@ -11,40 +11,10 @@ const YELP_LIMIT = 50 // must be less than  or equal to 50
 const YELP_RADIUS = 40000 // must be less than or equal to 40000
 const YELP_AUTH_TOKEN = process.env.YELP_TOKEN
 
-// https://www.yelp.com/developers/documentation/v3/all_category_list
-
-const CATEGORIES = [
-  'shopping',
-  // 'pets',
-]
-
-const categories2 = [
-  'arts',
-  'restaurants',
-  'food',
-  'auto',
-  'hotels',
-  'financialservices',
-  'nightlife',
-  'active',
-  'health',
-  'education',
-  'professional',
-  'localservices',
-  'hotelstravel',
-  'electronics',
-  'grocery',
-  'deptstores',
-  'movietheaters',
-  'drugstores',
-  'wholesale_stores',
-  'coffee',
-  'petstore',
-]
 
 async function getPlaces(latitude, longitude, category) {
   try {
-    const url = `https://api.yelp.com/v3/businesses/search?latitude=${latitude}&longitude=${longitude}&limit=${YELP_LIMIT}&radius=${YELP_RADIUS}&sort_by=distance`
+    const url = `https://api.yelp.com/v3/businesses/search?latitude=${latitude}&longitude=${longitude}&limit=${YELP_LIMIT}&radius=${YELP_RADIUS}&categories=${category}&sort_by=distance`
     console.log('category is', category)
     const options = {
       headers: {
@@ -91,34 +61,31 @@ const saveParsedData = (neighbors, outputFileName) => {
   fileSystem.writeFileSync(outputFileName, outputCsv, 'utf8')
 }
 
-async function parseComplete(results, outputFileName) {
+async function parseComplete(results, outputFileName, category) {
   let newData = []
   let data = results.data
 
-  for (j = 0; j < CATEGORIES.length; j++){
-    for (i = 0; i < data.length; i++) {
-      let row = data[i]
-      let stationLatitude = row['Latitude']
-      let stationLongitude = row['Longitude']
-      let stationLIN = row.LIN
-      let siteAccountName = row['Location (LIN): Location Name']
+  for (i = 0; i < data.length; i++) {
+    let row = data[i]
+    let stationLatitude = row['Latitude']
+    let stationLongitude = row['Longitude']
+    let stationLIN = row.LIN
+    let siteAccountName = row['Location (LIN): Location Name']
 
-      if (stationLatitude && stationLongitude) {
-        console.log('CATEGORIES IS ', CATEGORIES[j])
-        let yelpData = await getYelpWrapper(stationLatitude, stationLongitude, CATEGORIES[j])
+    if (stationLatitude && stationLongitude) {
+      let yelpData = await getYelpWrapper(stationLatitude, stationLongitude, category)
 
-        stationAndBusinessInfo = yelpData.map(business => {
-          return {
-            stationLatitude,
-            stationLongitude,
-            stationLIN,
-            siteAccountName,
-            ...business
-          }
-        })
-        newData = newData.concat(stationAndBusinessInfo)
-        console.log('new data number of records:', stationAndBusinessInfo.length, stationAndBusinessInfo[0])
-      }
+      stationAndBusinessInfo = yelpData.map(business => {
+        return {
+          stationLatitude,
+          stationLongitude,
+          stationLIN,
+          siteAccountName,
+          ...business
+        }
+      })
+      newData = newData.concat(stationAndBusinessInfo)
+      console.log('new data number of records:', stationAndBusinessInfo.length, stationAndBusinessInfo[0])
     }
   }
 
@@ -128,7 +95,7 @@ async function parseComplete(results, outputFileName) {
 }
 
 
-const getYelpDataFromStations = (inputFileName, outputFileName) => {
+const getYelpDataFromStations = (inputFileName, outputFileName, category) => {
   // const INPUT_FILE = "report-11-26-18.csv";
   // const OUTPUT_CSV_FILE_NAME = 'yelp-cinema-11-26-18.csv'
 
@@ -137,7 +104,7 @@ const getYelpDataFromStations = (inputFileName, outputFileName) => {
   Papa.parse(fileString, {
     header: true,
     complete: function (results) {
-      parseComplete(results, outputFileName)
+      parseComplete(results, outputFileName, category)
     }
   })
 

@@ -2,12 +2,57 @@
 var fs = require('fs');
 
 
+const CATEGORIES = [
+  // 'shopping',
+  'pets',
+]
+
+const VALID_CATEGORIES = {
+  'shopping': true,
+  'pets': true,
+  'arts': true,
+  'restaurants': true,
+  'food': true,
+  'auto': true,
+  'hotels': true,
+  'financialservices': true,
+  'nightlife': true,
+  'active': true,
+  'health': true,
+  'education': true,
+  'professional': true,
+  'localservices': true,
+  'hotelstravel': true,
+  'electronics': true,
+  'grocery': true,
+  'deptstores': true,
+  'movietheaters': true,
+  'drugstores': true,
+  'wholesale_stores': true,
+  'coffee': true,
+  'petstore': true,
+}
+
 var getYelpDataFromStations = require('./index');
 
 const [, , ...args] = process.argv
 
 if (args.length == 0) {
   console.error('you must provide an input csv file')
+  return
+}
+if (args.length < 2) {
+  console.error('you must provide a category')
+}
+const inputFileName = args[0]
+if (!fs.existsSync(inputFileName)) {
+  console.error('you didnt provide a valid input csv file name')
+  return
+}
+const category = args[1]
+if (!VALID_CATEGORIES[category]) {
+  const urlForValidCategories ="https://www.yelp.com/developers/documentation/v3/all_category_list"
+  console.error('must be a valid category. see: ', urlForValidCategories)
   return
 }
 
@@ -23,20 +68,8 @@ const getDate = () => {
   return readableDate
 }
 
-const outputFileName = 'yelp-data-' + getDate() + '.csv'
+const outputFileName = 'yelp-data-' + category +'-' + getDate() + '.csv'
 
-const inputFileName = args[0]
+console.log('scanning sites', inputFileName)
 
-const category = args[1]
-
-if (fs.existsSync(inputFileName)) {
-  console.log('hello world', inputFileName)
-
-  getYelpDataFromStations(inputFileName, outputFileName)
-  console.log('all done')
-
-  // Do something
-}
-
-
-
+getYelpDataFromStations(inputFileName, outputFileName, category)
