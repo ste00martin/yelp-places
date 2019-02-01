@@ -1,12 +1,19 @@
 {
+  "license": "MIT",
+  "name": "get-yelp-data",
+  "main": "index.js",
   "dependencies": {
     "flat": "^4.1.0",
     "fs": "^0.0.1-security",
     "got": "^8.3.2",
+    "minimist": "^1.2.0",
     "papaparse": "^4.5.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.6",
     "eslint-config-volta": "https://github.com/Volta-Charging/eslint-config-volta.git"
+  },
+  "bin": {
+    "get-yelp-data": "./cli.js"
   }
 }
